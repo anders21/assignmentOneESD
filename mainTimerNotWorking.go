@@ -65,16 +65,17 @@ func main() {
 	}
 
 	// Generate a report, and measure the time to do so
-	
+	startTime := time.Now()
 	studentReport := generateStudentReport(studentData)
-	
+	endTime := time.Now()
 	
 
 	// Print data on the screen
 	formatted, _ := json.MarshalIndent(studentReport, "", "\t")
-
-	fmt.Println(string(formatted[0]))
-	
+	fmt.Println(string(formatted))
+	fmt.Println(startTime.Format("Mon Jan 2 2006 15:04:05.000"))
+	fmt.Println(endTime.Format("Mon Jan 2 2006 15:04:05.000"))
+	fmt.Print("Used time: ", endTime.Sub(startTime), "\n")
 }
 
 /*
@@ -94,8 +95,6 @@ func validateStudentData(studentData StudentData) []error{
 Select all students and show the marks for each student
 */
 func generateStudentReport(studentData StudentData) []StudentReportRecord {
-	startTime := time.Now()
-	time.Sleep(1 * time.Second)
 	var studentReport []StudentReportRecord
 
 	// Make a useful map
@@ -130,10 +129,7 @@ func generateStudentReport(studentData StudentData) []StudentReportRecord {
 		}
 		studentReport = append(studentReport, studentReportRecord)
 	}
-	endTime := time.Now()
-	fmt.Println(startTime.Format("Mon Jan 2 2006 15:04:05.000"))
-	fmt.Println(endTime.Format("Mon Jan 2 2006 15:04:05.000"))
-	fmt.Print("Used time: ", endTime.Sub(startTime), "\n")
+
 	return studentReport
 }
 
