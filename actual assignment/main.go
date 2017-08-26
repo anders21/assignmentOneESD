@@ -54,31 +54,54 @@ func main() {
 
 	fmt.Println("Sarah Anderson's Applciation")
 
-	startTime := time.Now()
-	// Import data from JSON file, and Unmarshal into "StudentData" struct
-	studentData := tryImportAndUnmarshal("student_data.json")
-	// Generate a report
-	studentReport := generateStudentReport(studentData)
+	// Complete the process in two different ways
+	// Import data from JSON file, and Unmarshal into "StudentData" struct and generate report
+	// Only record the time to import, unmarshal and generate report, NOT print data
 
-	endTime := time.Now() // Only record the time to import, unmarshal and generate report, NOT print data
-
+	// Map method
+	map_startTime := time.Now()
+	map_studentData := tryImportAndUnmarshal("student_data.json")
+	map_studentReport := mapGenerateStudentReport(map_studentData)
+	map_endTime := time.Now() 
+	
+	// Array method
+	array_startTime := time.Now()
+	array_studentData := tryImportAndUnmarshal("student_data.json")
+	array_studentReport := arrayGenerateStudentReport(array_studentData)
+	array_endTime := time.Now()
+	
 	// Print data on the screen
-	fmt.Println(studentReport)
+	if array_studentReport == map_studentReport	{
+		fmt.Println(map_studentReport)
 
-	// Print data on the screen
-	validationMessages := validateStudentData(studentData)
-	if validationMessages != nil {
-		fmt.Printf("Imported data with %d validation warning(s): \n", len(validationMessages))
-		for messageIndex := 0; messageIndex < len(validationMessages); messageIndex++ {
-			fmt.Println("* ", validationMessages[messageIndex])
+		// Print data on the screen
+		validationMessages := validateStudentData(array_studentData)
+		if validationMessages != nil {
+			fmt.Printf("Imported data with %d validation warning(s): \n", len(validationMessages))
+			for messageIndex := 0; messageIndex < len(validationMessages); messageIndex++ {
+				fmt.Println("* ", validationMessages[messageIndex])
+			}
 		}
+	} else{
+		fmt.Println("Reports are not the same")
+		fmt.Println("Map report:")
+		fmt.Println(map_studentReport)
+
+		fmt.Println("Array report:")
+		fmt.Println(array_studentReport)
 	}
 	
-	// Give a report of the time taken
+	// Map Report
 	fmt.Println("Applciation used a `Mapping` method")
-	fmt.Println(startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
-	fmt.Println(endTime.Format("Mon Jan 2 2006 15:04:05.00000"))
-	fmt.Print("Used time: ", endTime.Sub(startTime), "\n")
+	fmt.Println(map_startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
+	fmt.Println(map_endTime.Format("Mon Jan 2 2006 15:04:05.00000"))
+	fmt.Print("Used time: ", map_endTime.Sub(map_startTime), "\n")
+
+	// Array Report
+	fmt.Println("Applciation used a `Array` method")
+	fmt.Println(array_startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
+	fmt.Println(array_endTime.Format("Mon Jan 2 2006 15:04:05.00000"))
+	fmt.Print("Used time: ", array_endTime.Sub(array_startTime), "\n")
 }
 
 /*
@@ -112,43 +135,6 @@ func studentExists(studentData StudentData, studentID int) bool{
 		}
 	}
 		return false
-}
-
-/* Select all students and show the marks for each student */
-func generateStudentReport(studentData StudentData) string {
-
-	var studentReport string
-
-	// Make a useful map
-	markMap := make(map[int][]CourseMark)
-
-	for studentDataIndex := 0; studentDataIndex < len(studentData.MyMarks); studentDataIndex++ {
-		currentStudentID := studentData.MyMarks[studentDataIndex].StudentID
-		var currentArray []CourseMark
-		currentArray = markMap[currentStudentID]
-		aMark := CourseMark{
-			Class: studentData.MyMarks[studentDataIndex].Class,
-			Mark:  studentData.MyMarks[studentDataIndex].Mark}
-
-		currentArray = append(currentArray, aMark)
-		markMap[currentStudentID] = currentArray
-	}
-
-	// Format the data ready to print
-	for studentDataIndex := 0; studentDataIndex < len(studentData.MyStudents); studentDataIndex++ {
-		studentReport += ("\n" + 
-			studentData.MyStudents[studentDataIndex].FirstName + 
-			" " + 
-			studentData.MyStudents[studentDataIndex].LastName)
-
-		for markIndex := 0; markIndex < len(markMap[studentData.MyStudents[studentDataIndex].StudentID]); markIndex++ {
-			studentReport += fmt.Sprintf("\n    | %-20s|%6.2f |", 
-				markMap[studentData.MyStudents[studentDataIndex].StudentID][markIndex].Class, 
-				markMap[studentData.MyStudents[studentDataIndex].StudentID][markIndex].Mark)
-		}
-	}
-
-	return studentReport
 }
 
 /* Import data from JSON file, and save into format of "StudentData" struct */
