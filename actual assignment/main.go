@@ -15,16 +15,16 @@ type StudentData struct {
 }
 
 type Mark struct {
-	StudentID float64 `json:"student_id"`
+	StudentID int `json:"student_id"`
 	Class     string  `json:"class"`
 	Mark      float64 `json:"mark"`
 }
 
 type Student struct {
-	StudentID   float64 `json:"student_id"`
+	StudentID   int `json:"student_id"`
 	FirstName   string  `json:"first_name"`
 	LastName    string  `json:"last_name"`
-	Age         float64 `json:"age"`
+	Age         int `json:"age"`
 	PhoneNumber string  `json:"phone_number"`
 	Suburb      string  `json:"suburb"`
 	City        string  `json:"city"`
@@ -56,14 +56,14 @@ func main() {
 
 	startTime := time.Now()
 	// Import data from JSON file, and Unmarshal into "StudentData" struct
-	studentData := tryImportAndUnmarshal("student_data_test_invalid.json")
+	studentData := tryImportAndUnmarshal("student_data.json")
 	// Generate a report
 	studentReport := generateStudentReport(studentData)
-	endTime := time.Now()
+
+	endTime := time.Now() // Only record the time to import, unmarshal and generate report, NOT print data
 
 	// Print data on the screen
-	formatted, _ := json.MarshalIndent(studentReport, "", "\t")
-	fmt.Println(string(formatted))
+	fmt.Println(studentReport)
 
 	// Print data on the screen
 	validationMessages := validateStudentData(studentData)
@@ -75,13 +75,14 @@ func main() {
 	}
 	
 	// Give a report of the time taken
+	fmt.Println("Applciation used a `Mapping` method")
 	fmt.Println(startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
 	fmt.Println(endTime.Format("Mon Jan 2 2006 15:04:05.00000"))
 	fmt.Print("Used time: ", endTime.Sub(startTime), "\n")
 }
 
 /*
-	Validate data
+	Validate StudentData imported for the following errors:
 	-- Check all marks are associated with a Student that exists
 */
 func validateStudentData(studentData StudentData) []string {
@@ -89,7 +90,7 @@ func validateStudentData(studentData StudentData) []string {
 
 	// Check all the ids are unique
 	for marksIndex := 0; marksIndex < len(studentData.MyMarks); marksIndex ++{
-		currentID := int(studentData.MyMarks[marksIndex].StudentID)
+		currentID := studentData.MyMarks[marksIndex].StudentID
 		if !studentExists(studentData, currentID) {
 			// Add an error message
 			validationMessages = append(validationMessages, 
@@ -103,24 +104,23 @@ func validateStudentData(studentData StudentData) []string {
 	return validationMessages
 }
 
+/* Helper Method: Validate if an student record has been imported for a given id */
 func studentExists(studentData StudentData, studentID int) bool{
 	for studentIndex := 0; studentIndex < len(studentData.MyStudents); studentIndex ++{
-		if int(studentData.MyStudents[studentIndex].StudentID) == studentID{
+		if studentData.MyStudents[studentIndex].StudentID == studentID{
 			return true
 		}
 	}
 		return false
 }
 
-/*
-Select all students and show the marks for each student
-*/
-func generateStudentReport(studentData StudentData) []StudentReportRecord {
+/* Select all students and show the marks for each student */
+func generateStudentReport(studentData StudentData) string {
 
-	var studentReport []StudentReportRecord
+	var studentReport string
 
 	// Make a useful map
-	markMap := make(map[float64][]CourseMark)
+	markMap := make(map[int][]CourseMark)
 
 	for studentDataIndex := 0; studentDataIndex < len(studentData.MyMarks); studentDataIndex++ {
 		currentStudentID := studentData.MyMarks[studentDataIndex].StudentID
@@ -134,30 +134,24 @@ func generateStudentReport(studentData StudentData) []StudentReportRecord {
 		markMap[currentStudentID] = currentArray
 	}
 
-	// Format the data in the map
+	// Format the data ready to print
 	for studentDataIndex := 0; studentDataIndex < len(studentData.MyStudents); studentDataIndex++ {
-		studentReportRecord := StudentReportRecord{
-			FirstName: studentData.MyStudents[studentDataIndex].FirstName,
-			LastName:  studentData.MyStudents[studentDataIndex].LastName,
-			Marks:     make([]CourseMark, 0)}
+		studentReport += ("\n" + 
+			studentData.MyStudents[studentDataIndex].FirstName + 
+			" " + 
+			studentData.MyStudents[studentDataIndex].LastName)
 
 		for markIndex := 0; markIndex < len(markMap[studentData.MyStudents[studentDataIndex].StudentID]); markIndex++ {
-			newMark := CourseMark{
-				Class: markMap[studentData.MyStudents[studentDataIndex].StudentID][markIndex].Class,
-				Mark:  markMap[studentData.MyStudents[studentDataIndex].StudentID][markIndex].Mark,
-			}
-
-			studentReportRecord.Marks = append(studentReportRecord.Marks, newMark)
+			studentReport += fmt.Sprintf("\n    | %-20s|%6.2f |", 
+				markMap[studentData.MyStudents[studentDataIndex].StudentID][markIndex].Class, 
+				markMap[studentData.MyStudents[studentDataIndex].StudentID][markIndex].Mark)
 		}
-		studentReport = append(studentReport, studentReportRecord)
 	}
 
 	return studentReport
 }
 
-/*
-Import data from JSON file, and save into format of "StudentData" struct
-*/
+/* Import data from JSON file, and save into format of "StudentData" struct */
 func tryImportAndUnmarshal(fileName string) StudentData {
 	var fileContent StudentData
 
@@ -176,11 +170,13 @@ func tryImportAndUnmarshal(fileName string) StudentData {
 	return fileContent
 }
 
+/* Helper method: Read file and reutrn content and error */
 func readFile(fileName string) (content []byte, readFileError error) {
 	content, readFileError = ioutil.ReadFile(fileName)
 	return
 }
 
+/* Helper method: Read file content, and convert from JSON to `StudentData` struct */
 func unmarshallJSON(fileContent []byte) (studentData StudentData, unmarshallError error) {
 	unmarshallError = json.Unmarshal(fileContent, &studentData)
 	return
