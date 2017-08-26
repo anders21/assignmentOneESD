@@ -41,7 +41,6 @@ type StudentReportRecord struct {
 	Marks     []CourseMark
 }
 
-
 func main() {
 	defer profile.Start(
 		profile.MemProfile,
@@ -50,42 +49,41 @@ func main() {
 
 	fmt.Println("Sarah Anderson's Applciation")
 
-	studentData, importErrors := tryImportAndUnmarshal("student_data_full.json")
-	if importErrors != nil{
-		// Crash
-	}
-
-	// Print data on the screen
-	//formatted, _ := json.MarshalIndent(studentData, "", "\t")
-	//fmt.Println(string(formatted))// Uncomment this line for printout of file contents
-	
-	valiationErrors := validateStudentData(studentData)
-	if valiationErrors != nil{
-		// Crash
-	}
-
-	// Generate a report, and measure the time to do so
-	
+	startTime := time.Now()
+	// Import data from JSON file, and Unmarshal into "StudentData" struct
+	studentData := tryImportAndUnmarshal("student_data_full.json")
+	// Generate a report
 	studentReport := generateStudentReport(studentData)
-	
-	
+	endTime := time.Now()
 
 	// Print data on the screen
 	formatted, _ := json.MarshalIndent(studentReport, "", "\t")
-
 	fmt.Println(string(formatted[0]))
-	
+
+	// Give a report of the time taken
+	fmt.Println(startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
+	fmt.Println(endTime.Format("Mon Jan 2 2006 15:04:05.00000"))
+	fmt.Print("Used time: ", endTime.Sub(startTime), "\n")
+
+	// Print data on the screen
+	/*valiationErrors := validateStudentData(studentData)
+	if valiationErrors != nil {
+		// Crash
+	}
+	*/
 }
 
 /*
 	Validate data
 	-- Check all StudentIds exist
-	-- Check that important things aren't null
-	-- Validate the amount of data (count( ))
 */
-func validateStudentData(studentData StudentData) []error{
-	var importErrors []error
-	 importErrors = nil
+func validateStudentData(studentData StudentData) []string {
+	var importErrors []string
+	/*
+		// Check all the ids are unique
+		for studentIndex = 0; studentIndex < StudentData.MyStudents; studentIndex ++{
+			if
+		}*/
 
 	return importErrors
 }
@@ -94,8 +92,7 @@ func validateStudentData(studentData StudentData) []error{
 Select all students and show the marks for each student
 */
 func generateStudentReport(studentData StudentData) []StudentReportRecord {
-	startTime := time.Now()
-	time.Sleep(1 * time.Second)
+
 	var studentReport []StudentReportRecord
 
 	// Make a useful map
@@ -130,34 +127,37 @@ func generateStudentReport(studentData StudentData) []StudentReportRecord {
 		}
 		studentReport = append(studentReport, studentReportRecord)
 	}
-	endTime := time.Now()
-	fmt.Println(startTime.Format("Mon Jan 2 2006 15:04:05.000"))
-	fmt.Println(endTime.Format("Mon Jan 2 2006 15:04:05.000"))
-	fmt.Print("Used time: ", endTime.Sub(startTime), "\n")
+
 	return studentReport
 }
 
 /*
 Import data from JSON file, and save into format of "StudentData" struct
 */
-func tryImportAndUnmarshal(fileName string) (StudentData, []error) {
+func tryImportAndUnmarshal(fileName string) StudentData {
 	var fileContent StudentData
-	var importErrors []error
-	
+
 	// Read file and return if an error
-	studentDataFileContent, readFileError := ioutil.ReadFile(fileName)
+	studentDataFileContent, readFileError := readFile(fileName)
 	if readFileError != nil {
-		importErrors = append(importErrors, readFileError)
-		return fileContent, importErrors
+		panic(readFileError)
 	}
-	
+
 	// Unmarshal data into "StudentData" struct
-	jsonBlob := []byte(studentDataFileContent)
-	unmarshallError := json.Unmarshal(jsonBlob, &fileContent)
-	if unmarshallError != nil{
-		importErrors = append(importErrors, unmarshallError)
+	fileContent, unmarshallError := unmarshallJSON(studentDataFileContent)
+	if unmarshallError != nil {
+		panic(unmarshallError)
 	}
-	
-	return fileContent, importErrors
+
+	return fileContent
 }
 
+func readFile(fileName string) (content []byte, readFileError error) {
+	content, readFileError = ioutil.ReadFile(fileName)
+	return
+}
+
+func unmarshallJSON(fileContent []byte) (studentData StudentData, unmarshallError error) {
+	unmarshallError = json.Unmarshal(fileContent, &studentData)
+	return
+}
