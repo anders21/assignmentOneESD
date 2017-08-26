@@ -27,7 +27,11 @@ func TestUnmarshallJSON(t *testing.T) {
 	AssertEqual(t, "No errors when unmarshalling", unmarshallError, nil)
 
 	// Test: Correct amount of data imported (Array length)
-	// importedStudentData :=
+	numStudentsImported := len(importedStudentData.MyStudents)
+	numMarksImported := len(importedStudentData.MyMarks)
+
+	AssertEqual(t, "Importanted Data Student Count", numStudentsImported, 2)
+	AssertEqual(t, "Importanted Data Marks Count", numMarksImported, 5)
 
 	// Test: All imported data in correctly in the struct
 	firstImportedStudent := importedStudentData.MyStudents[0]
@@ -53,12 +57,16 @@ func TestUnmarshallJSON(t *testing.T) {
 
 }
 
-func TestValidData(t *testing.T) {
+func TestValidateStudentData(t *testing.T) {
+	// Set Up: Read a file and unmarhsal data
+	fileContent, _ := readFile("student_data_test_invalid.json")
+	importedStudentData, _ := unmarshallJSON(fileContent)
 
-	// Test: Correct data is imported
-	// Test: User is alerted to invalid data
-	//AssertEqual(t, "All fields have correct data", importedStudentData, nil)
+	// Execute: ValidateStudentData
+	validationErrors := validateStudentData(importedStudentData)
 
-	// Test: Correct amount of data imported (Array length)
-	//AssertEqual(t, "Correct number of imported data", importedStudentData, nil)
+	// Test: User is alerted to invalid data missing student
+	expectedMessage := fmt.Sprintf(MissingStudentRecordValidationMessage, "Programming", 0)
+	actualMessage := validationErrors[0] // We only need to test the first message
+	AssertEqual(t, "No student found for mark", actualMessage, expectedMessage)
 }

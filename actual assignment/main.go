@@ -41,6 +41,11 @@ type StudentReportRecord struct {
 	Marks     []CourseMark
 }
 
+// Validation messages
+const (
+	MissingStudentRecordValidationMessage = "`%s` mark cannot be imported for student with id of `%v`"
+)
+
 func main() {
 	defer profile.Start(
 		profile.MemProfile,
@@ -51,41 +56,60 @@ func main() {
 
 	startTime := time.Now()
 	// Import data from JSON file, and Unmarshal into "StudentData" struct
-	studentData := tryImportAndUnmarshal("student_data_full.json")
+	studentData := tryImportAndUnmarshal("student_data_test_invalid.json")
 	// Generate a report
 	studentReport := generateStudentReport(studentData)
 	endTime := time.Now()
 
 	// Print data on the screen
 	formatted, _ := json.MarshalIndent(studentReport, "", "\t")
-	fmt.Println(string(formatted[0]))
+	fmt.Println(string(formatted))
 
+	// Print data on the screen
+	validationMessages := validateStudentData(studentData)
+	if validationMessages != nil {
+		fmt.Printf("Imported data with %d validation warning(s): \n", len(validationMessages))
+		for messageIndex := 0; messageIndex < len(validationMessages); messageIndex++ {
+			fmt.Println("* ", validationMessages[messageIndex])
+		}
+	}
+	
 	// Give a report of the time taken
 	fmt.Println(startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
 	fmt.Println(endTime.Format("Mon Jan 2 2006 15:04:05.00000"))
 	fmt.Print("Used time: ", endTime.Sub(startTime), "\n")
-
-	// Print data on the screen
-	/*valiationErrors := validateStudentData(studentData)
-	if valiationErrors != nil {
-		// Crash
-	}
-	*/
 }
 
 /*
 	Validate data
-	-- Check all StudentIds exist
+	-- Check all marks are associated with a Student that exists
 */
 func validateStudentData(studentData StudentData) []string {
-	var importErrors []string
-	/*
-		// Check all the ids are unique
-		for studentIndex = 0; studentIndex < StudentData.MyStudents; studentIndex ++{
-			if
-		}*/
+	var validationMessages []string
 
-	return importErrors
+	// Check all the ids are unique
+	for marksIndex := 0; marksIndex < len(studentData.MyMarks); marksIndex ++{
+		currentID := int(studentData.MyMarks[marksIndex].StudentID)
+		if !studentExists(studentData, currentID) {
+			// Add an error message
+			validationMessages = append(validationMessages, 
+				fmt.Sprintf(
+					MissingStudentRecordValidationMessage, 
+					studentData.MyMarks[marksIndex].Class, 
+					studentData.MyMarks[marksIndex].StudentID))
+		}
+	}	
+
+	return validationMessages
+}
+
+func studentExists(studentData StudentData, studentID int) bool{
+	for studentIndex := 0; studentIndex < len(studentData.MyStudents); studentIndex ++{
+		if int(studentData.MyStudents[studentIndex].StudentID) == studentID{
+			return true
+		}
+	}
+		return false
 }
 
 /*
