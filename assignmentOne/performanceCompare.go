@@ -9,10 +9,11 @@ import (
 
 func performance() {
 	defer profile.Start(
+		profile.CPUProfile,
 		profile.MemProfile,
 		profile.ProfilePath("."),
 	).Stop()
-	
+
 	fmt.Println("Sarah Anderson's Applciation")
 
 	// Complete the process in two different ways
@@ -23,16 +24,16 @@ func performance() {
 	map_startTime := time.Now()
 	map_studentData := tryImportAndUnmarshal("student_data.json")
 	map_studentReport := mapGenerateStudentReport(map_studentData)
-	map_endTime := time.Now() 
-	
+	map_endTime := time.Now()
+
 	// Array method
 	array_startTime := time.Now()
 	array_studentData := tryImportAndUnmarshal("student_data.json")
 	array_studentReport := arrayGenerateStudentReport(array_studentData)
 	array_endTime := time.Now()
-	
+
 	// Print data on the screen
-	if array_studentReport == map_studentReport	{
+	if array_studentReport == map_studentReport {
 		fmt.Println(map_studentReport)
 
 		// Print data on the screen
@@ -43,7 +44,7 @@ func performance() {
 				fmt.Println("* ", validationMessages[messageIndex])
 			}
 		}
-	} else{
+	} else {
 		fmt.Println("Reports are not the same")
 		fmt.Println("Map report:")
 		fmt.Println(map_studentReport)
@@ -51,7 +52,7 @@ func performance() {
 		fmt.Println("Array report:")
 		fmt.Println(array_studentReport)
 	}
-	
+
 	// Map Report
 	fmt.Println("Applciation used a `Mapping` method")
 	fmt.Println(map_startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
