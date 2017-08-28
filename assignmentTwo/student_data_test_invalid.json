@@ -1,0 +1,15 @@
+{
+    "marks": [
+        {"student_id":0,"class":"Programming","mark":43.8},
+        {"student_id":0,"class":"Cheese","mark":43.8}
+    ],
+    "students": [{
+        "student_id": 1,
+        "first_name": "Martelle",
+        "last_name": "Frogley",
+        "age": 16,
+        "phone_number": "025 438 6397",
+        "suburb": "Mayfair",
+        "city": "Hastings"
+    }]
+}
