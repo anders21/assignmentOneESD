@@ -53,10 +53,14 @@ func main() {
 	} else {
 		// Production
 
-		fmt.Println("Sarah Anderson's Applciation")
+		fmt.Println("Sarah Anderson's Application")
 
 		// Import data from JSON file, and Unmarshal into "StudentData" struct and generate report
 		studentData := tryImportAndUnmarshal("student_data.json")
+
+		averageReport := generateAverageMarkReport(studentData)
+		fmt.Println(averageReport)
+		
 		studentReport := arrayGenerateStudentReport(studentData)
 
 		// Print data on the screen
@@ -70,6 +74,7 @@ func main() {
 				fmt.Println("* ", validationMessages[messageIndex])
 			}
 		}
+		
 	}
 }
 
