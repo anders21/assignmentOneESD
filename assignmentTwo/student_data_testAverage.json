@@ -1,0 +1,38 @@
+{
+    "marks": [
+        {"student_id":0,"class":"Programming","mark":10.10},
+        {"student_id":0,"class":"Operating Systems","mark":60},
+        {"student_id":0,"class":"Hardware","mark":5.50},
+        {"student_id":1,"class":"Hardware","mark":10},
+        {"student_id":1,"class":"Programming","mark":11.11},
+        {"student_id":1,"class":"Operating Systems","mark":50},
+        {"student_id":19,"class":"Hardware","mark":14.50},
+        {"student_id":19,"class":"Programming","mark":12.12},
+        {"student_id":19,"class":"Operating Systems","mark":40}
+    ],
+    "students": [{
+        "student_id": 0,
+        "first_name": "Becka",
+        "last_name": "Corde",
+        "age":22,
+        "phone_number": "026 501 3527",
+        "suburb": "Tamatea",
+        "city": "Napier"
+    }, {
+        "student_id": 1,
+        "first_name": "Martelle",
+        "last_name": "Frogley",
+        "age": 16,
+        "phone_number": "025 438 6397",
+        "suburb": "Mayfair",
+        "city": "Hastings"
+    },{
+        "student_id": 19,
+        "first_name": "Wernher",
+        "last_name": "Dutchburn",
+        "age": 17,
+        "phone_number": "029 811 8026",
+        "suburb": "Mayfair",
+        "city": "Hastings"
+    }]
+}

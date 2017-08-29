@@ -55,15 +55,15 @@ func main() {
 
 		fmt.Println("Sarah Anderson's Application")
 
-		// Import data from JSON file, and Unmarshal into "StudentData" struct and generate report
+		// Import data from JSON file, and Unmarshal into "StudentData" struct
 		studentData := tryImportAndUnmarshal("student_data.json")
 
+		// Print out average mark per location per mark sorted highest to lowest
 		averageReport := generateAverageMarkReport(studentData)
 		fmt.Println(averageReport)
 		
+		// Print out marks per student
 		studentReport := arrayGenerateStudentReport(studentData)
-
-		// Print data on the screen
 		fmt.Println(studentReport)
 
 		// Validate the data imported
