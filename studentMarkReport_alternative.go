@@ -26,13 +26,10 @@ func generateStudentMarkReport_alternative(studentData *StudentData) string {
 
 	// Format the data ready to print
 	for studentDataIndex := 0; studentDataIndex < len(studentData.MyStudents); studentDataIndex++ {
-		studentReport += ("\n" + 
-			studentData.MyStudents[studentDataIndex].FirstName + 
-			" " + 
-			studentData.MyStudents[studentDataIndex].LastName)
-
 		for markIndex := 0; markIndex < len(markMap[studentData.MyStudents[studentDataIndex].StudentID]); markIndex++ {
-			studentReport += fmt.Sprintf("\n    | %-20s|%6.2f |", 
+			studentReport += fmt.Sprintf("\n| %-20s| %-20s| %-20s|%6.2f |", 
+				studentData.MyStudents[studentDataIndex].FirstName,
+				studentData.MyStudents[studentDataIndex].LastName,
 				markMap[studentData.MyStudents[studentDataIndex].StudentID][markIndex].Class, 
 				markMap[studentData.MyStudents[studentDataIndex].StudentID][markIndex].Mark)
 		}

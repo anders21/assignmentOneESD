@@ -18,7 +18,7 @@ func main() {
 		fmt.Println("Sarah Anderson's Application")
 
 		// Import data from JSON file, and Unmarshal into "StudentData" struct
-		studentData := tryImportAndUnmarshal("student_data_test_invalid.json")
+		studentData := tryImportAndUnmarshal("student_data.json")
 
 		// Validate the data imported
 		validationMessages := validateStudentData(&studentData)

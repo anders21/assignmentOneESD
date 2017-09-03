@@ -5,6 +5,10 @@ import (
 	"sort"
 )
 
+type CourseMark struct{
+	Mark float64
+	Class string
+}
 type LocationListItem struct{
 	Location string
 	Mark float64
@@ -32,13 +36,13 @@ func generateAverageClassPerSuburbMarkReport(studentData *StudentData) string {
 // Format the data ready to print
 func formatAverageMarkReport(locationList []LocationListItem) string {
 	var studentReport string
-	studentReport += fmt.Sprintf("\n\t| %-20s | %-20s| %-12s |", 
+	studentReport += fmt.Sprintf("\n| %-20s | %-20s| %-12s |", 
 		"Location", 
 		"Class", 
 		"Average Mark")
 
 	for markIndex := 0; markIndex < len(locationList); markIndex++ {
-		studentReport += fmt.Sprintf("\n\t| %-20s | %-20s| %12.2f |", 
+		studentReport += fmt.Sprintf("\n| %-20s | %-20s| %12.2f |", 
 			locationList[markIndex].Location, 
 			locationList[markIndex].Class, 
 			locationList[markIndex].Mark)
