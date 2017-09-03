@@ -11,10 +11,10 @@ func performance() {
 	defer profile.Start(
 		profile.CPUProfile,
 		profile.MemProfile,
-		profile.ProfilePath("."),
+		profile.ProfilePath("./Profiling"),
 	).Stop()
 
-	fmt.Println("Sarah Anderson's Applciation")
+	fmt.Println("Sarah Anderson's Application in debug mode")
 
 	// Complete the process in two different ways
 	// Import data from JSON file, and Unmarshal into "StudentData" struct and generate report
@@ -23,27 +23,22 @@ func performance() {
 	// Map method
 	map_startTime := time.Now()
 	map_studentData := tryImportAndUnmarshal("student_data.json")
-	map_studentReport := mapGenerateStudentReport(map_studentData)
+	map_studentReport := generateStudentMarkReport_alternative(&map_studentData)
 	map_endTime := time.Now()
 
 	// Array method
 	array_startTime := time.Now()
 	array_studentData := tryImportAndUnmarshal("student_data.json")
-	array_studentReport := arrayGenerateStudentReport(array_studentData)
+	array_studentReport := generateStudentMarkReport(&array_studentData)
 	array_endTime := time.Now()
 
 	// Print data on the screen
 	if array_studentReport == map_studentReport {
-		fmt.Println(map_studentReport)
+		fmt.Println(array_studentReport)
 
-		// Print data on the screen
-		validationMessages := validateStudentData(array_studentData)
-		if validationMessages != nil {
-			fmt.Printf("Imported data with %d validation warning(s): \n", len(validationMessages))
-			for messageIndex := 0; messageIndex < len(validationMessages); messageIndex++ {
-				fmt.Println("* ", validationMessages[messageIndex])
-			}
-		}
+		// Validate the data imported
+		validationMessages := validateStudentData(&array_studentData)
+		fmt.Println(validationMessages)		
 	} else {
 		fmt.Println("Reports are not the same")
 		fmt.Println("Map report:")
@@ -54,13 +49,13 @@ func performance() {
 	}
 
 	// Map Report
-	fmt.Println("Applciation used a `Mapping` method")
+	fmt.Println("Application used a `Mapping` method")
 	fmt.Println(map_startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
 	fmt.Println(map_endTime.Format("Mon Jan 2 2006 15:04:05.00000"))
 	fmt.Print("Used time: ", map_endTime.Sub(map_startTime), "\n")
 
 	// Array Report
-	fmt.Println("Applciation used a `Array` method")
+	fmt.Println("Application used an `Array` method")
 	fmt.Println(array_startTime.Format("Mon Jan 2 2006 15:04:05.000000"))
 	fmt.Println(array_endTime.Format("Mon Jan 2 2006 15:04:05.00000"))
 	fmt.Print("Used time: ", array_endTime.Sub(array_startTime), "\n")

@@ -1,10 +1,9 @@
 package main
 
-import (
-	"fmt"
+import(
 	"testing"
+	"fmt"
 )
-
 func TestReadFile(t *testing.T) {
 	// Execute: Open and read content of a file
 	fileContent, error := readFile("student_data_test.json")
@@ -16,15 +15,15 @@ func TestReadFile(t *testing.T) {
 	AssertTrue(t, "Can get content from a file", len(fileContent) > 0)
 }
 
-func TestUnmarshallJSON(t *testing.T) {
+func TestUnmarshalJSON(t *testing.T) {
 	// Set Up: Read a file
 	fileContent, _ := readFile("student_data_test.json")
 
-	// Execute: Test unmarshallJSON method
-	importedStudentData, unmarshallError := unmarshallJSON(fileContent)
+	// Execute: Test unmarshalJSON method
+	importedStudentData, unmarshalError := unmarshalJSON(fileContent)
 
 	// Test: No errors
-	AssertEqual(t, "No errors when unmarshalling", unmarshallError, nil)
+	AssertEqual(t, "No errors when unmarshaling", unmarshalError, nil)
 
 	// Test: Correct amount of data imported (Array length)
 	numStudentsImported := len(importedStudentData.MyStudents)
@@ -58,15 +57,20 @@ func TestUnmarshallJSON(t *testing.T) {
 }
 
 func TestValidateStudentData(t *testing.T) {
-	// Set Up: Read a file and unmarhsal data
+	// Set Up: Read a file and unmarshal data
 	fileContent, _ := readFile("student_data_test_invalid.json")
-	importedStudentData, _ := unmarshallJSON(fileContent)
+	importedStudentData, _ := unmarshalJSON(fileContent)
 
 	// Execute: ValidateStudentData
-	validationErrors := validateStudentData(importedStudentData)
+	validationErrors := validateStudentData(&importedStudentData)
 
 	// Test: User is alerted to invalid data missing student
-	expectedMessage := fmt.Sprintf(MissingStudentRecordValidationMessage, "Programming", 0)
+	expectedMessage := fmt.Sprintf(MissingStudentRecordValidationMessage,"Programming",0)
 	actualMessage := validationErrors[0] // We only need to test the first message
 	AssertEqual(t, "No student found for mark", actualMessage, expectedMessage)
+
+	// Test: Check the count
+	expectedCount := 2
+	actualCount := len(validationErrors)
+	AssertEqual(t, "Validation error messages count", actualCount, expectedCount)
 }

@@ -11,19 +11,6 @@ type LocationListItem struct{
 	Class string
 }
 
-// Ability to hold student and marks together
-type StudentMarksDTO struct{
-	StudentID int
-	Suburb string
-	Marks []MarkRecord	
-}
-
-type MarkRecord struct {
-	Class string  
-	Mark float64 
-}
-
-
 type LocationClassGroup struct{
 	Location string
 	Class string
@@ -34,9 +21,9 @@ type LocationClassGroup struct{
 A function that provides an overview (in text format) of the average mark per paper
 per suburb, sorted on marks from high to low.
 */
-func generateAverageMarkReport(studentData StudentData) string {
+func generateAverageClassPerSuburbMarkReport(studentData *StudentData) string {
 	locationList := getStudentMarkList(studentData)
-	suburbTotalLocationList := tellySuburb(locationList)
+	suburbTotalLocationList := tallySuburb(locationList)
 	averages := calcAverage(suburbTotalLocationList)
 	sortedMarksForClassAndLocation := sortByMarksForClassAndLocation(averages)
 	return formatAverageMarkReport(sortedMarksForClassAndLocation)
@@ -45,13 +32,13 @@ func generateAverageMarkReport(studentData StudentData) string {
 // Format the data ready to print
 func formatAverageMarkReport(locationList []LocationListItem) string {
 	var studentReport string
-	studentReport += fmt.Sprintf("\n    | %-20s | %-20s| %-12s |", 
+	studentReport += fmt.Sprintf("\n\t| %-20s | %-20s| %-12s |", 
 		"Location", 
 		"Class", 
 		"Average Mark")
 
 	for markIndex := 0; markIndex < len(locationList); markIndex++ {
-		studentReport += fmt.Sprintf("\n    | %-20s | %-20s| %12.2f |", 
+		studentReport += fmt.Sprintf("\n\t| %-20s | %-20s| %12.2f |", 
 			locationList[markIndex].Location, 
 			locationList[markIndex].Class, 
 			locationList[markIndex].Mark)
@@ -60,7 +47,7 @@ func formatAverageMarkReport(locationList []LocationListItem) string {
 	return studentReport
 }
 
-func getStudentMarkList(studentData StudentData) []LocationListItem{
+func getStudentMarkList(studentData *StudentData) []LocationListItem{
 	
 	// Imitate the map using a look up table for the studentID and an array of an array of marks
 	var lookUpTable []int
@@ -103,7 +90,7 @@ func getStudentMarkList(studentData StudentData) []LocationListItem{
 	return dtoList
 }
 
-func tellySuburb(locationList []LocationListItem) []LocationClassGroup{
+func tallySuburb(locationList []LocationListItem) []LocationClassGroup{
 	var groupList []LocationClassGroup
 
 	for index := 0; index < len(locationList); index ++ {

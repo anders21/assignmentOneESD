@@ -5,7 +5,7 @@ import(
 )
 
 /* Select all students and show the marks for each student */
-func mapGenerateStudentReport(studentData StudentData) string {
+func generateStudentMarkReport_alternative(studentData *StudentData) string {
 
 	var studentReport string
 
